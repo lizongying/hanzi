@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡化字轉漢字</title>
+    <script src="index.js"></script>
+    <script>
+        window.onload = () => {
+            const traditional = document.querySelector('#traditional');
+            const simplified = document.querySelector('#simplified');
+
+            const hanInstance = Han.getInstance();
+
+            const copyValue = () => {
+                traditional.value = hanInstance.toTraditional(simplified.value);
+            }
+
+            simplified.addEventListener('input', () => {
+                copyValue()
+            });
+        }
+    </script>
+    <style>
+        body {
+            direction: rtl;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Source Han Serif TC', 'SimSun-ExtB', 'MingLiU', serif;
+            background-color: #f7f6f5;
+        }
+
+        h1 {
+            width: 1em;
+            margin: 1em;
+        }
+
+        #simplified:focus, #traditional:focus {
+            outline: none;
+        }
+
+        #simplified, #traditional {
+            width: 100%;
+            height: 100%;
+            resize: none;
+            padding: .5em;
+            box-sizing: border-box;
+            font-size: 24px;
+            color: #444;
+        }
+
+        #simplified {
+            direction: ltr;
+            border-left: none;
+        }
+
+        #traditional {
+            text-align: left;
+            writing-mode: vertical-rl;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<h1>簡化字轉漢字</h1>
+
+<div class="container">
+    <label for="simplified"></label>
+    <textarea id="simplified" placeholder="简化字"></textarea>
+    <label for="traditional"></label>
+    <textarea id="traditional" readonly placeholder="漢字"></textarea>
+</div>
+
+</body>
+</html>
