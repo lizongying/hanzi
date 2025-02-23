@@ -9,7 +9,7 @@
         window.onload = () => {
             const traditional = document.querySelector('#traditional');
             const simplified = document.querySelector('#simplified');
-            const h1 = document.querySelector('h1');
+            const header = document.querySelector('header');
 
             const hanInstance = Han.getInstance();
 
@@ -25,10 +25,10 @@
             document.querySelector('#floating-action-button').onclick = () => {
                 if (!hide) {
                     simplified.style.display = 'none';
-                    h1.style.display = 'none';
+                    header.style.display = 'none';
                 } else {
                     simplified.style.display = 'block';
-                    h1.style.display = 'inline';
+                    header.style.display = 'grid';
                 }
                 hide = !hide
             }
