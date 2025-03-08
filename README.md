@@ -22,19 +22,13 @@
 * 橫向/豎向
 * 米字格
 
-配置：
+### node
 
-* boxSize = '100px', // 暫時不用設置，默認會根據container的寬高和columnNum自動設置
-* borderSize = '1px', // 可不用設置
-* borderSizeBold = '2px', // 可不用設置
-* fontSize = '80px', // 暫時不用設置，默認會設置為boxSize的4/5
-* fontFamily = 'serif', // 可以設置
-* borderColorOut = 'darkgreen', // 可以設置
-* borderColorIn = 'red', // 可以設置
-* mode = 'V', // 'V/H' 漢字排列方向。推薦設置
-* count = 80, // 默認生成多少個漢字底紋，如果不設置會根據要展示的漢字數量自動添加。推薦設置
-* columnNum = 8, // 每一行多少個漢字。推薦設置
-* selector = '#container' // 顯示漢字的容器，如果不指定，會自動創建一個。強烈推薦設置
+```
+npm i js-hanzi
+```
+
+### browser
 
 ```html
 <!DOCTYPE html>
@@ -50,7 +44,7 @@
             height: 600px;
         }
     </style>
-    <script src="./zi.js"></script>
+    <script src="raw.githubusercontent.com/lizongying/js-gua64/refs/heads/main/docs/zi.min.js"></script>
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             const config = {
@@ -69,3 +63,17 @@
 </body>
 </html>
 ```
+
+配置：
+
+* boxSize = '100px', // 暫時不用設置，默認會根據container的寬高和columnNum自動設置
+* borderSize = '1px', // 可不用設置
+* borderSizeBold = '2px', // 可不用設置
+* fontSize = '80px', // 暫時不用設置，默認會設置為boxSize的4/5
+* fontFamily = 'serif', // 可以設置
+* borderColorOut = 'darkgreen', // 可以設置
+* borderColorIn = 'red', // 可以設置
+* mode = 'V', // 'V/H' 漢字排列方向。推薦設置
+* count = 80, // 默認生成多少個漢字底紋，如果不設置會根據要展示的漢字數量自動添加。推薦設置
+* columnNum = 8, // 每一行多少個漢字。推薦設置
+* selector = '#container' // 顯示漢字的容器，如果不指定，會自動創建一個。強烈推薦設置
