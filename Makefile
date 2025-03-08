@@ -1,6 +1,6 @@
 .PHONY: all
 
-all: run
+all: han
 
-run:
-	node index.js
+han:
+	node docs/han.js
