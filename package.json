@@ -1,0 +1,26 @@
+{
+  "name": "zi",
+  "version": "0.0.1",
+  "description": "漢字網頁排版\n支持文字豎向排列，支持米字格底紋",
+  "main": "docs/zi.min.js",
+  "scripts": {
+    "build": "npx terser docs/zi.js --comments 'https://github.com/lizongying/hanzi' -o docs/zi.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lizongying/hanzi.git"
+  },
+  "keywords": [
+    "漢字",
+    "汉字"
+  ],
+  "author": "Li ZongYing",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lizongying/hanzi/issues"
+  },
+  "homepage": "https://github.com/lizongying/hanzi#readme",
+  "devDependencies": {
+    "terser": "^5.30.3"
+  }
+}
