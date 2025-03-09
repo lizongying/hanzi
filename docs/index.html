@@ -3,145 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>簡化字轉漢字</title>
-    <script src="han.js"></script>
-    <script>
-        window.onload = () => {
-            const traditional = document.querySelector('#traditional');
-            const simplified = document.querySelector('#simplified');
-            const header = document.querySelector('header');
-
-            const hanInstance = Han.getInstance();
-
-            const copyValue = () => {
-                traditional.value = hanInstance.toTraditional(simplified.value);
-            }
-
-            simplified.addEventListener('input', () => {
-                copyValue()
-            });
-
-            let hide = false
-            document.querySelector('#floating-action-button').onclick = () => {
-                if (!hide) {
-                    simplified.style.display = 'none';
-                    header.style.display = 'none';
-                } else {
-                    simplified.style.display = 'block';
-                    header.style.display = 'grid';
-                }
-                hide = !hide
-            }
-        }
-    </script>
+    <title>漢字示例</title>
     <style>
-        body {
-            direction: rtl;
-            display: flex;
-            align-items: normal;
-            height: 100vh;
-            margin: 0;
-            font-family: 'Source Han Serif TC', 'SimSun-ExtB', 'MingLiU', serif;
-            background-color: #f7f6f5;
-        }
-
-        header {
-            display: grid;
-            align-items: flex-end;
-        }
-
-        h1 {
-            margin: .5em;
-            writing-mode: vertical-rl;
-            white-space: nowrap;
-        }
-
-        .links {
-            direction: ltr;
-            font-size: 16px;
-            text-align: right;
-            list-style-type: none;
-            padding: 1em;
-        }
-
         .container {
-            display: flex;
-            width: 100%;
-            height: 100%;
+            height: 600px;
         }
 
-        #simplified:focus, #traditional:focus {
-            outline: none;
-        }
-
-        #simplified, #traditional {
-            width: 100%;
-            height: 100%;
-            resize: none;
-            padding: .5em;
-            box-sizing: border-box;
-            font-size: 24px;
-            color: #444;
-            direction: ltr;
-            font-family: 'Source Han Serif TC', 'SimSun-ExtB', 'MingLiU', serif;
-        }
-
-        #simplified {
-            border-left: none;
-        }
-
-        #traditional {
-            writing-mode: vertical-rl;
-        }
-
-        .floating-action-button {
-            position: fixed;
-            left: 1em;
-            bottom: 1.5em;
-            width: 56px;
-            height: 56px;
-            background-color: #8B0000;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 24px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        .switch {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            line-height: 50px;
+            border: 1px solid #000;
             cursor: pointer;
-            z-index: 1000;
-            transition: background-color 0.3s ease;
-        }
-
-        .floating-action-button:active {
-            background-color: #e91e63;
         }
     </style>
+    <script src="./zi.min.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const zi = new Zi({
+                container: '.container',
+                mode: 'V',
+                columnNum: 6,
+                count: 36,
+            });
+            zi.show('漢字示例漢字示例漢字示例漢字示例漢字示例漢字示例');
+            zi.show('我的世界');
+
+            document.querySelectorAll('.switch')[0].onclick = () => {
+                zi.setMode('V')
+            }
+            document.querySelectorAll('.switch')[1].onclick = () => {
+                zi.setMode('H')
+            }
+        })
+    </script>
 </head>
 <body>
 <header>
-    <h1>簡化字轉漢字</h1>
+    <h1>漢字示例</h1>
     <ul class="links">
-        <li><a target="_blank" href="zi.html">字</a></li>
-        <li><a target="_blank" href="https://github.com/lizongying/hanzi">Pages</a></li>
-        <li><a target="_blank" href="https://github.com/lizongying/pyhan">Py</a></li>
-        <li><a target="_blank" href="https://github.com/lizongying/hanzi">Rust</a></li>
-        <li><a target="_blank" href="https://github.com/lizongying/hanzi">Go</a></li>
-        <li><a target="_blank" href="https://github.com/lizongying/hanzi">Js</a></li>
-        <li><a target="_blank" href="https://github.com/lizongying/hanzi">Kotlin</a></li>
-        <li><a target="_blank" href="https://github.com/lizongying/hanzi">Php</a></li>
-        <li><a target="_blank" href="https://github.com/lizongying/hanzi">C#</a></li>
+        <li><a target="_blank" href="https://github.com/lizongying/hanzi/">github</a></li>
+        <li><a target="_blank" href="https://www.npmjs.com/package/js-hanzi">npm</a></li>
+        <li><a target="_blank" href="https://lizongying.github.io/js-han/">簡轉漢</a></li>
     </ul>
 </header>
-<div class="container">
-    <label for="simplified"></label>
-    <textarea id="simplified" placeholder="简化字"></textarea>
-    <label for="traditional"></label>
-    <textarea id="traditional" readonly placeholder="漢字"></textarea>
+<div>
+    <div class="switch">縱</div>
+    <div class="switch">橫</div>
 </div>
-<div id="floating-action-button" class="floating-action-button">
-    漢
-</div>
+<hr>
+<div class="container"></div>
 </body>
 </html>

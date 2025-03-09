@@ -14,14 +14,15 @@
     "漢字",
     "汉字",
     "hanzi",
-    "chinese"
+    "chinese",
+    "米字格"
   ],
   "author": "Li ZongYing",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/lizongying/hanzi/issues"
   },
-  "homepage": "https://github.com/lizongying/hanzi#readme",
+  "homepage": "https://lizongying.github.io/hanzi/",
   "devDependencies": {
     "terser": "^5.30.3"
   }

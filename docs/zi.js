@@ -1,6 +1,6 @@
 class Zi {
 
-    constructor(container, config = {}) {
+    constructor(config = {}) {
         const {
             boxSize = '100px',
             borderSize = '1px',
@@ -12,7 +12,7 @@ class Zi {
             mode = 'V', // 'V/H'
             count = 80,
             columnNum = 8,
-            selector = '#container'
+            container = '#container'
         } = config;
 
         this.config = {
@@ -26,31 +26,40 @@ class Zi {
             mode,
             count,
             columnNum,
-            selector,
+            container,
         };
 
-        this.container = document.querySelector(container);
-        if (this.container == null) {
+        this.container = document.querySelector(this.config.container);
+        if (this.container === null) {
             this.container = document.createElement('div');
             this.container.id = 'container';
             document.body.appendChild(this.container);
-        } else {
-            this.config.selector = container;
+            this.config.container = '#container';
         }
 
         if (this.config.mode === 'H') {
             const bs = Math.floor(this.container.clientWidth / this.config.columnNum);
             const fs = Math.floor(bs * 4 / 5);
-            this.config.boxSize = `${bs}px`
-            this.config.fontSize = `${fs}px`
+            this.config.boxSize = `${bs}px`;
+            this.config.fontSize = `${fs}px`;
         } else {
             const bs = Math.floor(this.container.clientHeight / this.config.columnNum);
             const fs = Math.floor(bs * 4 / 5);
-            this.config.boxSize = `${bs}px`
-            this.config.fontSize = `${fs}px`
+            this.config.boxSize = `${bs}px`;
+            this.config.fontSize = `${fs}px`;
         }
 
-        this.full()
+        this.full();
+        this.createStyle();
+    }
+
+    setMode = (mode) => {
+        this.config.mode = mode;
+        this.createStyle();
+    }
+
+    setColumnNum = (num) => {
+        this.config.columnNum = num;
         this.createStyle();
     }
 
@@ -90,9 +99,13 @@ class Zi {
     }
 
     createStyle = () => {
-        const style = document.createElement('style');
-        style.textContent = `
-        ${this.config.selector} {
+        if (this.style === undefined) {
+            this.style = document.createElement('style');
+            document.head.appendChild(this.style);
+        }
+
+        this.style.textContent = `
+        ${this.config.container} {
             display: flex;
             align-content: flex-start;
             flex-wrap: wrap;
@@ -103,7 +116,6 @@ class Zi {
             font-size: ${this.config.fontSize};
             font-family: ${this.config.fontFamily};
             overflow: scroll;
-            margin-bottom: -0.5em;
         }
 
         .c {
@@ -123,8 +135,8 @@ class Zi {
         }
         
         .c:nth-last-child(-n+${this.config.columnNum}) {
-            ${this.config.mode === 'H' ? 'margin-top: 0;' : 'margin-right: 0;'}   
-            ${this.config.mode === 'H' ? 'margin-bottom: 0;' : 'margin-left: 0;'}            
+            ${this.config.mode === 'H' ? 'margin-top: 0;' : 'margin-right: 0;'}
+            ${this.config.mode === 'H' ? 'margin-bottom: 0;' : 'margin-left: 0;'}
         }
         
         .l0, .l1, .l2, .l3 {
@@ -170,7 +182,7 @@ class Zi {
             height: 0;
         }
 `;
-        document.head.appendChild(style);
+        document.head.appendChild(this.style);
     }
 }
 
