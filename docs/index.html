@@ -3,20 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>漢字示例</title>
+    <title>漢字排版</title>
     <style>
+        body {
+            direction: rtl;
+            display: flex;
+            align-items: normal;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Source Han Serif TC', 'SimSun-ExtB', 'MingLiU', serif;
+            background-color: #f7f6f5;
+        }
+
+        header {
+            display: grid;
+            align-items: flex-end;
+            direction: ltr;
+            margin: 0 10px;
+            max-width: min-content;
+        }
+
+        section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
         .container {
-            height: 600px;
+            width: 100%;
+            height: 100%;
         }
 
         .switch {
             display: inline-block;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 40px;
             text-align: center;
-            line-height: 50px;
+            line-height: 40px;
             border: 1px solid #000;
             cursor: pointer;
+        }
+
+        .active {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .item {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .item2 {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media print {
+            header {
+                display: none;
+            }
         }
     </style>
     <script src="./zi.min.js"></script>
@@ -24,36 +73,149 @@
         window.addEventListener('DOMContentLoaded', () => {
             const zi = new Zi({
                 container: '.container',
-                mode: 'V',
-                columnNum: 6,
-                count: 36,
+                mode: 0,
+                columnNum: 10,
+                rowNum: 20,
             });
-            zi.show('漢字示例漢字示例漢字示例漢字示例漢字示例漢字示例');
-            zi.show('我的世界');
+            zi.show('從明天起，做一個幸福的人\n' +
+                '喂馬、劈柴，周游世界\n' +
+                '從明天起，關心糧食和蔬菜\n' +
+                '我有一所房子，面朝大海，春暖花開\n' +
+                '從明天起，和每一個親人通信\n' +
+                '告訴他們我的幸福\n' +
+                '那幸福的閃電告訴我的\n' +
+                '我將告訴每一個人\n' +
+                '給每一條河每一座山取一個温暖的名字\n' +
+                '陌生人，我也爲你祝福\n' +
+                '願你有一個燦爛的前程\n' +
+                '願你有情人終成眷屬\n' +
+                '願你在塵世穫得幸福\n' +
+                '我只願面朝大海，春暖花開');
 
-            document.querySelectorAll('.switch')[0].onclick = () => {
-                zi.setMode('V')
-            }
-            document.querySelectorAll('.switch')[1].onclick = () => {
-                zi.setMode('H')
-            }
+            const mode = document.querySelectorAll('[data-name="mode"]>.switch');
+            mode[zi.config.mode].classList.add('active');
+            [...mode].forEach((e, i) => {
+                e.onclick = () => {
+                    zi.setMode(i);
+                    [...mode].forEach(e => {
+                        e.classList.remove('active')
+                    })
+                    mode[i].classList.add('active')
+                }
+            })
+
+            const style = document.querySelectorAll('[data-name="style"]>.switch');
+            style[zi.config.style].classList.add('active');
+            [...style].forEach((e, i) => {
+                e.onclick = () => {
+                    zi.setStyle(i);
+                    [...style].forEach(e => {
+                        e.classList.remove('active')
+                    })
+                    style[i].classList.add('active')
+                }
+            })
+
+            const page = document.querySelectorAll('[data-name="page"]>.switch')
+            page[zi.config.fit].classList.add('active');
+            [...page].forEach((e, i) => {
+                e.onclick = () => {
+                    zi.setFit(i);
+                    [...page].forEach(e => {
+                        e.classList.remove('active')
+                    })
+                    page[i].classList.add('active')
+                }
+            })
+
+            const column = document.getElementById('column');
+            const columnValue = document.getElementById('columnValue');
+
+            column.addEventListener('input', function () {
+                zi.setColumnNum(Number(column.value));
+                columnValue.textContent = '每行/列字數: ' + column.value;
+            });
+            column.value = zi.config.columnNum;
+            columnValue.textContent = '每行/列字數: ' + column.value;
+
+            const row = document.getElementById('row');
+            const rowValue = document.getElementById('rowValue');
+            row.addEventListener('input', function () {
+                zi.setRowNum(Number(row.value));
+                rowValue.textContent = '行/列數: ' + row.value;
+            });
+            row.value = zi.config.rowNum;
+            rowValue.textContent = '行/列數: ' + row.value;
+
+            const borderColorOutPicker = document.getElementById('borderColorOutPicker');
+            const borderColorOutDisplay = document.getElementById('borderColorOutDisplay');
+
+            borderColorOutPicker.addEventListener('input', function () {
+                borderColorOutDisplay.style.backgroundColor = borderColorOutPicker.value;
+                zi.setBorderColorOut(borderColorOutPicker.value);
+            });
+            borderColorOutPicker.value = zi.config.borderColorOut;
+            borderColorOutDisplay.style.backgroundColor = borderColorOutPicker.value;
+
+            const borderColorInPicker = document.getElementById('borderColorInPicker');
+            const borderColorInDisplay = document.getElementById('borderColorInDisplay');
+
+            borderColorInPicker.addEventListener('input', function () {
+                borderColorInDisplay.style.backgroundColor = borderColorInPicker.value;
+                zi.setBorderColorIn(borderColorInPicker.value);
+            });
+            borderColorInPicker.value = zi.config.borderColorIn;
+            borderColorInDisplay.style.backgroundColor = borderColorInPicker.value;
         })
     </script>
 </head>
 <body>
 <header>
-    <h1>漢字示例</h1>
+    <h1>漢字排版</h1>
+    <div style="display: flex; flex-direction: column;">
+        <div class="item2">
+            <label for="column"></label>
+            <div class="column-value" id="columnValue">每行/列字數: 8</div>
+            <input type="range" min="1" max="50" value="8" step="1" id="column">
+        </div>
+        <div class="item2">
+            <label for="row"></label>
+            <div class="row-value" id="rowValue">行/列數: 8</div>
+            <input type="range" min="1" max="50" value="8" step="1" id="row">
+        </div>
+        <div class="item" data-name="mode">
+            <div class="switch">縱</div>
+            <div class="switch">橫</div>
+        </div>
+        <div class="item" data-name="style">
+            <div class="switch">米</div>
+            <div class="switch">田</div>
+            <div class="switch">口</div>
+            <div class="switch">一</div>
+        </div>
+        <div class="item" data-name="page">
+            <div class="switch">全屏</div>
+            <div class="switch">縮放</div>
+        </div>
+        <div class="item" data-name="borderColorOut">
+            <label for="borderColorOutPicker">邊框颜色: </label>
+            <input type="color" id="borderColorOutPicker" value="#ff0000">
+            <div id="borderColorOutDisplay"></div>
+        </div>
+        <div class="item" data-name="borderColorIn">
+            <label for="borderColorInPicker">虛線颜色: </label>
+            <input type="color" id="borderColorInPicker" value="#ff0000">
+            <div id="borderColorInDisplay"></div>
+        </div>
+    </div>
     <ul class="links">
         <li><a target="_blank" href="https://github.com/lizongying/hanzi/">github</a></li>
         <li><a target="_blank" href="https://www.npmjs.com/package/js-hanzi">npm</a></li>
         <li><a target="_blank" href="https://lizongying.github.io/js-han/">簡轉漢</a></li>
     </ul>
 </header>
-<div>
-    <div class="switch">縱</div>
-    <div class="switch">橫</div>
-</div>
-<hr>
-<div class="container"></div>
+<section style="padding: 10px; box-sizing: border-box;">
+    <div class="container"></div>
+</section>
 </body>
 </html>

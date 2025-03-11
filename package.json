@@ -1,6 +1,6 @@
 {
   "name": "js-hanzi",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "漢字網頁排版\n支持文字豎向排列，支持米字格底紋",
   "main": "docs/zi.min.js",
   "scripts": {

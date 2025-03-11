@@ -40,7 +40,7 @@ npm i js-hanzi
                 container: '.container',
                 mode: 'V',
                 columnNum: 6,
-                count: 30,
+                rowNum: 6,
             });
             zi.show('漢字示例漢字示例漢字示例漢字示例漢字示例漢字示例');
             zi.show('我的世界');
@@ -56,16 +56,17 @@ npm i js-hanzi
 
 配置：
 
-* boxSize = '100px', // 暫時不用設置，默認會根據container的寬高和columnNum自動設置
+* boxSize = 100, // 暫時不用設置，默認會根據container的寬高和columnNum自動設置
 * borderSize = '1px', // 可不用設置
 * borderSizeBold = '2px', // 可不用設置
-* fontSize = '80px', // 暫時不用設置，默認會設置為boxSize的4/5
+* fontSize = 80, // 暫時不用設置，默認會設置為boxSize的4/5
 * fontFamily = 'serif', // 可以設置
-* borderColorOut = 'darkgreen', // 可以設置
-* borderColorIn = 'red', // 可以設置
-* mode = 'V', // 'V/H' 漢字排列方向。推薦設置
-* count = 80, // 默認生成多少個漢字底紋，如果不設置會根據要展示的漢字數量自動添加。推薦設置
-* columnNum = 8, // 每一行多少個漢字。推薦設置
+* borderColorOut = '#006400', // 可以設置
+* borderColorIn = '#FF0000', // 可以設置
+* mode = 0, // '0V/1H' 漢字排列方向。推薦設置
+* style = 0, // '0米/1田/2口/3一' 底紋樣式。推薦設置
+* rowNum = 8, // 默認生成多少行/列漢字底紋，如果不設置會根據要展示的漢字數量自動添加。推薦設置
+* columnNum = 8, // 每一行/列多少個漢字。推薦設置
 * container = '#container' // 顯示漢字的容器，如果不指定，會自動創建一個。強烈推薦設置
 
 ## 讚賞
