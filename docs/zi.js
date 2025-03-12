@@ -2,11 +2,8 @@ class Zi {
 
     constructor(config = {}) {
         const {
-            fit = 0,
-            boxSize = 100,
             borderSize = '1px',
             borderSizeBold = '2px',
-            fontSize = 80,
             fontFamily = 'serif',
             borderColorOut = '#006400',
             borderColorIn = '#FF0000',
@@ -14,15 +11,20 @@ class Zi {
             style = 0, // '0米/1田/2口/3一'
             rowNum = 8,
             columnNum = 8,
-            container = '#container'
+            container = '#container',
+            padding = 50,
+            padding1 = 5,
         } = config;
 
         this.config = {
-            fit,
-            boxSize,
+            clientWidth: 0,
+            clientHeight: 0,
+            containerWidth: 0,
+            containerHeight: 0,
+            boxSize: 100,
+            fontSize: 80,
             borderSize,
             borderSizeBold,
-            fontSize,
             fontFamily,
             borderColorOut,
             borderColorIn,
@@ -31,63 +33,102 @@ class Zi {
             rowNum,
             columnNum,
             container,
+            padding,
+            padding1,
         };
 
-        this.container = document.querySelector(this.config.container) || this.createContainer();
-        this.updateSizes();
+        this.createContainer();
+        this.style = document.createElement('style');
+
         this.full();
+        this.updateSizes();
         this.updateStyle();
+    }
+
+    createIframeWithContent(style) {
+        const iframeDoc = this.iframe.contentDocument || this.iframe.contentWindow.document;
+        iframeDoc.open();
+        iframeDoc.write(`
+                <!DOCTYPE html>
+                <html lang="zh-CN">
+                <head>
+                    <meta charset="UTF-8">
+                    <title></title>
+                    <style>
+                    body {
+                        width: ${this.config.mode === 1 ? '210' : '297'}mm;
+                        height: ${this.config.mode === 1 ? '297' : '210'}mm;
+                        padding: 0;
+                        margin: 0;
+                        font-family: 'Source Han Serif TC', 'SimSun-ExtB', 'MingLiU', serif;
+                    }
+                    </style>
+                    <style>
+                    ${style}
+                    </style>
+                </head>
+                <body>
+                    ${this.container.outerHTML}
+                </body>
+                </html>
+            `);
+        iframeDoc.close();
+    }
+
+    printIframe() {
+        const a = 210 * 4;
+        const b = 297 * 4;
+        if (this.config.mode === 1) {
+            this.iframe.width = `${a}px`;
+            this.iframe.height = `${b}px`;
+        } else {
+            this.iframe.width = `${b}px`;
+            this.iframe.height = `${a}px`;
+        }
+        this.createIframeWithContent(this.changeStyle(this.changeSizes({
+            ...this.config,
+            clientWidth: this.config.mode === 1 ? a : b,
+            clientHeight: this.config.mode === 1 ? b : a,
+        })));
+        this.iframe.contentWindow.print();
     }
 
     createContainer() {
-        const container = document.createElement('div');
-        container.id = 'container';
-        document.body.appendChild(container);
-        this.config.container = '#container';
-        return container;
+        this.container = document.querySelector(this.config.container);
+        this.container1 = document.createElement('div');
+        this.container1.className = 'c1';
+        this.container.appendChild(this.container1);
+        this.container2 = document.createElement('div');
+        this.container2.className = 'c2';
+        this.container1.appendChild(this.container2);
+
+        this.iframe = document.createElement('iframe');
+        this.iframe.style.display = 'none';
+        this.container.parentElement.appendChild(this.iframe);
+    }
+
+    changeSizes(config) {
+        const dimension = config.mode === 1 ? config.clientWidth : config.clientHeight;
+        const bs = Math.floor((dimension - config.padding * 2 - config.padding1 * 2) / config.columnNum);
+        const fs = Math.floor(bs * 4 / 5);
+        config.boxSize = bs;
+        config.fontSize = fs;
+
+        const v = bs * config.columnNum;
+        if (config.mode === 1) {
+            config.containerWidth = v;
+            config.containerHeight = `auto`;
+        } else {
+            config.containerHeight = v;
+            config.containerWidth = `auto`;
+        }
+        return config;
     }
 
     updateSizes() {
-        const dimension = this.config.mode === 1 ? this.container.clientWidth : this.container.clientHeight;
-        const bs = Math.floor(dimension / this.config.columnNum);
-        const fs = Math.floor(bs * 4 / 5);
-        this.config.boxSize = bs;
-        this.config.fontSize = fs;
-
-        const v = `${bs * this.config.columnNum}px`;
-        if (this.config.mode === 1) {
-            this.container.style.width = v;
-            this.container.style.height = `100%`;
-        } else {
-            this.container.style.height = v;
-            this.container.style.width = `100%`;
-        }
-    }
-
-    setFit(fit) {
-        this.config.fit = fit;
-        if (fit === 1) {
-            const v1 = this.config.boxSize * this.config.rowNum + Math.floor(this.config.fontSize / 2) * (this.config.rowNum - 1);
-
-            if (this.config.mode === 1) {
-                if (v1 > document.body.clientHeight - 20) {
-                    this.container.style.width = `${this.container.clientWidth * (document.body.clientHeight - 20) / v1}px`;
-                }
-            } else {
-                if (v1 > document.body.clientWidth - 20) {
-                    this.container.style.height = `${this.container.clientHeight * (document.body.clientWidth - 20) / v1}px`;
-                }
-            }
-        } else {
-            if (this.config.mode === 1) {
-                this.container.style.width = `100%`;
-            } else {
-                this.container.style.height = `100%`;
-            }
-        }
-
-        this.updateSizes();
-        this.updateStyle();
+        this.config.clientWidth = this.container.parentElement.clientWidth;
+        this.config.clientHeight = this.container.parentElement.clientHeight;
+        this.config = this.changeSizes(this.config);
     }
 
     setMode(mode) {
@@ -98,15 +139,14 @@ class Zi {
 
     setRowNum(num) {
         this.config.rowNum = num;
-        this.updateSizes();
         this.full();
         this.updateStyle();
     }
 
     setColumnNum(num) {
         this.config.columnNum = num;
-        this.updateSizes();
         this.full();
+        this.updateSizes();
         this.updateStyle();
     }
 
@@ -126,7 +166,7 @@ class Zi {
     }
 
     create(index, t) {
-        let character = this.container.children[index];
+        let character = this.container2.children[index];
         if (character) {
             if (t) {
                 character.querySelector('.t').textContent = t;
@@ -146,20 +186,25 @@ class Zi {
             text.textContent = t;
             character.appendChild(text);
 
-            this.container.appendChild(character);
+            this.container2.appendChild(character);
         }
     }
 
     show(content) {
+        while (this.container2.children.length) {
+            this.container2.removeChild(this.container2.lastChild);
+        }
         content.split('').forEach((index, t) => {
             this.create(t, index);
         });
+        this.full();
+        this.updateStyle();
     }
 
     full() {
         const count = this.config.rowNum * this.config.columnNum;
-        while (this.container.children.length > count) {
-            this.container.removeChild(this.container.lastChild);
+        while (this.container2.children.length > count) {
+            this.container2.removeChild(this.container2.lastChild);
         }
 
         for (let t = 0; t < count; t++) {
@@ -167,45 +212,64 @@ class Zi {
         }
     }
 
-    updateStyle() {
-        if (!this.style) {
-            this.style = document.createElement('style');
-            document.head.appendChild(this.style);
+    changeStyle(config) {
+        return `
+        ${config.container} {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            flex-direction: ${config.mode === 1 ? 'column' : 'row'};
+            align-items: center;
+            justify-content: center;
+            padding: ${config.padding}px;
+            box-sizing: border-box;
         }
-
-        this.style.textContent = `
-        ${this.config.container} {
+        
+        .c1 {
+            border: 3px solid ${config.borderColorOut};
+            display: flex;
+            flex-direction: ${config.mode === 1 ? 'column' : 'row'};
+            align-items: center;
+            justify-content: center;
+            padding:  ${config.padding1}px;
+            box-sizing: border-box; 
+            overflow: scroll;
+        }
+        
+        .c2 {
+            height: ${config.containerHeight}px;
+            width: ${config.containerWidth}px;
             display: flex;
             align-content: flex-start;
             flex-wrap: wrap;
-            flex-direction: ${this.config.mode === 1 ? 'row' : 'column'};
-            border-${this.config.mode === 1 ? 'left' : 'top'}: ${this.config.borderSize} solid ${this.config.borderColorOut};
-            border-${this.config.mode === 1 ? 'right' : 'bottom'}: ${this.config.borderSize} solid ${this.config.borderColorOut};
-            direction: ${this.config.mode === 1 ? 'ltr' : 'rtl'};
-            font-size: ${this.config.fontSize}px;
-            font-family: ${this.config.fontFamily};
+            flex-direction: ${config.mode === 1 ? 'row' : 'column'};
+            border-${config.mode === 1 ? 'left' : 'top'}: ${config.borderSize} solid ${config.borderColorOut};
+            border-${config.mode === 1 ? 'right' : 'bottom'}: ${config.borderSize} solid ${config.borderColorOut};
+            direction: ${config.mode === 1 ? 'ltr' : 'rtl'};
+            font-size: ${config.fontSize}px;
+            font-family: ${config.fontFamily};
             overflow: scroll;
         }
 
         .c {
             box-sizing: border-box;
-            ${this.config.mode === 1 ? 'margin-top: 0' : 'margin-right: 0'};
-            ${this.config.mode === 1 ? 'margin-bottom: .5em' : 'margin-left: .5em'};
-            border-right: ${this.config.mode === 1 ? this.config.style > 2 ? 0 : this.config.borderSize : this.config.borderSizeBold} solid ${this.config.borderColorOut};
-            border-left: ${this.config.mode === 1 ? this.config.style > 2 ? 0 : this.config.borderSize : this.config.borderSizeBold} solid ${this.config.borderColorOut};
-            border-bottom: ${this.config.mode === 1 ? this.config.borderSizeBold : this.config.style > 2 ? 0 : this.config.borderSize} solid ${this.config.borderColorOut};
-            border-top: ${this.config.mode === 1 ? this.config.borderSizeBold : this.config.style > 2 ? 0 : this.config.borderSize} solid ${this.config.borderColorOut};
-            width: ${this.config.boxSize}px;
-            height: ${this.config.boxSize}px;
+            ${config.mode === 1 ? 'margin-top: 0' : 'margin-right: 0'};
+            ${config.mode === 1 ? 'margin-bottom: .5em' : 'margin-left: .5em'};
+            border-right: ${config.mode === 1 ? config.style > 2 ? 0 : config.borderSize : config.borderSizeBold} solid ${config.borderColorOut};
+            border-left: ${config.mode === 1 ? config.style > 2 ? 0 : config.borderSize : config.borderSizeBold} solid ${config.borderColorOut};
+            border-bottom: ${config.mode === 1 ? config.borderSizeBold : config.style > 2 ? 0 : config.borderSize} solid ${config.borderColorOut};
+            border-top: ${config.mode === 1 ? config.borderSizeBold : config.style > 2 ? 0 : config.borderSize} solid ${config.borderColorOut};
+            width: ${config.boxSize}px;
+            height: ${config.boxSize}px;
             display: flex;
             overflow: hidden;
             justify-content: center;
             position: relative;
         }
         
-        .c:nth-last-child(-n+${this.config.columnNum}) {
-            ${this.config.mode === 1 ? 'margin-top: 0' : 'margin-right: 0'};
-            ${this.config.mode === 1 ? 'margin-bottom: 0' : 'margin-left: 0'};
+        .c:nth-last-child(-n+${config.columnNum}) {
+            ${config.mode === 1 ? 'margin-top: 0' : 'margin-right: 0'};
+            ${config.mode === 1 ? 'margin-bottom: 0' : 'margin-left: 0'};
         }
         
         .l0, .l1, .l2, .l3 {
@@ -222,12 +286,12 @@ class Zi {
         }
         
         .l0 {
-            border-bottom: ${this.config.borderSize} dashed ${this.config.borderColorIn};
+            border-bottom: ${config.borderSize} dashed ${config.borderColorIn};
             transform: translateX(-50%) translateY(-50%) rotate(-45deg);
         }
         
         .l1 {
-            border-left: ${this.config.borderSize} dashed ${this.config.borderColorIn};
+            border-left: ${config.borderSize} dashed ${config.borderColorIn};
             transform: translateX(20%) translateY(-50%) rotate(-45deg);
         }
         
@@ -237,31 +301,39 @@ class Zi {
         }
         
         .l2 {
-            border-left: ${this.config.borderSize} dashed ${this.config.borderColorIn};
+            border-left: ${config.borderSize} dashed ${config.borderColorIn};
             transform: translateX(50%);
         }
         
         .l3 {
-            border-top: ${this.config.borderSize} dashed ${this.config.borderColorIn};
+            border-top: ${config.borderSize} dashed ${config.borderColorIn};
             transform: translateY(50%);
         }
 
         .t {
-            line-height: ${this.config.boxSize}px;
+            line-height: ${config.boxSize}px;
             height: 0;
             z-index: 1;
         }
         
-        ${this.config.style > 0 ? '.l0, .l1 {display: none}' : '.l0, .l1 {display: block}'}
+        ${config.style > 0 ? '.l0, .l1 {display: none}' : '.l0, .l1 {display: block}'}
           
-        ${this.config.style > 1 ? '.l2, .l3 {display: none}' : '.l2, .l3 {display: block}'}
+        ${config.style > 1 ? '.l2, .l3 {display: none}' : '.l2, .l3 {display: block}'}
         
         @media print {
             @page {
-                size: A4 ${this.config.mode === 1 ? 'portrait' : 'landscape'};
+                size: A4 ${config.mode === 1 ? 'portrait' : 'landscape'};
+            }
+            
+            .c2 {
+                ${config.mode === 1 ? 'height: 100%!important;' : ''}
             }
         }
 `;
+    }
+
+    updateStyle() {
+        this.style.textContent = this.changeStyle(this.config);
         document.head.appendChild(this.style);
     }
 }

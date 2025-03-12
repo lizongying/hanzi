@@ -56,10 +56,8 @@ npm i js-hanzi
 
 配置：
 
-* boxSize = 100, // 暫時不用設置，默認會根據container的寬高和columnNum自動設置
 * borderSize = '1px', // 可不用設置
 * borderSizeBold = '2px', // 可不用設置
-* fontSize = 80, // 暫時不用設置，默認會設置為boxSize的4/5
 * fontFamily = 'serif', // 可以設置
 * borderColorOut = '#006400', // 可以設置
 * borderColorIn = '#FF0000', // 可以設置

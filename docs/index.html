@@ -24,15 +24,25 @@
         }
 
         section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .container {
             width: 100%;
             height: 100%;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .item2 {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
         }
 
         .switch {
@@ -50,16 +60,8 @@
             color: #fff;
         }
 
-        .item {
-            margin-top: 10px;
-            display: flex;
-            flex-wrap: wrap;
-        }
-
-        .item2 {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
+        #word {
+            resize: none;
         }
 
         @media print {
@@ -75,22 +77,13 @@
                 container: '.container',
                 mode: 0,
                 columnNum: 10,
-                rowNum: 20,
+                rowNum: 10,
             });
-            zi.show('從明天起，做一個幸福的人\n' +
-                '喂馬、劈柴，周游世界\n' +
-                '從明天起，關心糧食和蔬菜\n' +
-                '我有一所房子，面朝大海，春暖花開\n' +
-                '從明天起，和每一個親人通信\n' +
-                '告訴他們我的幸福\n' +
-                '那幸福的閃電告訴我的\n' +
-                '我將告訴每一個人\n' +
-                '給每一條河每一座山取一個温暖的名字\n' +
-                '陌生人，我也爲你祝福\n' +
-                '願你有一個燦爛的前程\n' +
-                '願你有情人終成眷屬\n' +
-                '願你在塵世穫得幸福\n' +
-                '我只願面朝大海，春暖花開');
+            const word = document.querySelector('#word');
+            zi.show(word.value);
+            word.addEventListener('input', () => {
+                zi.show(word.value);
+            });
 
             const mode = document.querySelectorAll('[data-name="mode"]>.switch');
             mode[zi.config.mode].classList.add('active');
@@ -116,21 +109,8 @@
                 }
             })
 
-            const page = document.querySelectorAll('[data-name="page"]>.switch')
-            page[zi.config.fit].classList.add('active');
-            [...page].forEach((e, i) => {
-                e.onclick = () => {
-                    zi.setFit(i);
-                    [...page].forEach(e => {
-                        e.classList.remove('active')
-                    })
-                    page[i].classList.add('active')
-                }
-            })
-
             const column = document.getElementById('column');
             const columnValue = document.getElementById('columnValue');
-
             column.addEventListener('input', function () {
                 zi.setColumnNum(Number(column.value));
                 columnValue.textContent = '每行/列字數: ' + column.value;
@@ -147,9 +127,17 @@
             row.value = zi.config.rowNum;
             rowValue.textContent = '行/列數: ' + row.value;
 
+            const page = document.querySelectorAll('[data-name="page"]>.switch')
+            page[0].onclick = () => {
+                row.value = column.value;
+                rowValue.textContent = '行/列數: ' + column.value;
+                zi.setRowNum(Number(column.value));
+                zi.printIframe();
+                // window.print();
+            }
+
             const borderColorOutPicker = document.getElementById('borderColorOutPicker');
             const borderColorOutDisplay = document.getElementById('borderColorOutDisplay');
-
             borderColorOutPicker.addEventListener('input', function () {
                 borderColorOutDisplay.style.backgroundColor = borderColorOutPicker.value;
                 zi.setBorderColorOut(borderColorOutPicker.value);
@@ -159,7 +147,6 @@
 
             const borderColorInPicker = document.getElementById('borderColorInPicker');
             const borderColorInDisplay = document.getElementById('borderColorInDisplay');
-
             borderColorInPicker.addEventListener('input', function () {
                 borderColorInDisplay.style.backgroundColor = borderColorInPicker.value;
                 zi.setBorderColorIn(borderColorInPicker.value);
@@ -172,7 +159,11 @@
 <body>
 <header>
     <h1>漢字排版</h1>
-    <div style="display: flex; flex-direction: column;">
+    <div class="field">
+        <div class="item2">
+            <label for="word"></label>
+            <textarea id="word" placeholder="待輸入">從明天起，做一個幸福的人 喂馬、劈柴，周游世界 從明天起，關心糧食和蔬菜 我有一所房子，面朝大海，春暖花開 從明天起，和每一個親人通信 告訴他們我的幸福 那幸福的閃電告訴我的 我將告訴每一個人 給每一條河每一座山取一個温暖的名字 陌生人，我也爲你祝福 願你有一個燦爛的前程 願你有情人終成眷屬 願你在塵世穫得幸福 我只願面朝大海，春暖花開</textarea>
+        </div>
         <div class="item2">
             <label for="column"></label>
             <div class="column-value" id="columnValue">每行/列字數: 8</div>
@@ -194,8 +185,7 @@
             <div class="switch">一</div>
         </div>
         <div class="item" data-name="page">
-            <div class="switch">全屏</div>
-            <div class="switch">縮放</div>
+            <div class="switch">打印</div>
         </div>
         <div class="item" data-name="borderColorOut">
             <label for="borderColorOutPicker">邊框颜色: </label>
@@ -214,7 +204,7 @@
         <li><a target="_blank" href="https://lizongying.github.io/js-han/">簡轉漢</a></li>
     </ul>
 </header>
-<section style="padding: 10px; box-sizing: border-box;">
+<section>
     <div class="container"></div>
 </section>
 </body>
